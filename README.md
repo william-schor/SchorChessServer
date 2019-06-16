@@ -1,4 +1,4 @@
-# lan_chess_server
+# SchorChessServer
 
 ## Server Thread Structure: 
 
