@@ -1,7 +1,7 @@
 package globals
 
 import (
-	"fmt"
+	"lanChessServer/chesslogic"
 	"sync"
 )
 
@@ -14,7 +14,8 @@ type Player struct {
 	Online      bool
 	Rating      int
 	TimeControl [2]int // [0]: total time in seconds, [1]: increment
-	Comms       chan string
+	GameComms   chan string
+	BoardComms  chan *chesslogic.SyncedBoard
 	sync.RWMutex
 }
 
@@ -25,25 +26,24 @@ var Online []*Player
 var Seeking []*Player
 
 // SignOn allows a thread to add themself to the online list
-func SignOn(username string, rating int) chan string {
+func SignOn(username string, rating int) {
 	p := Player{}
 	p.Username, p.Rating = username, rating
 	p.Online, p.Playing = true, false
 
 	Online = append(Online, &p)
 
-	return p.Comms
 }
 
 // Seek allows a thread to add themself to the seeking list
-func Seek(username string, rating int, timeControl [2]int) chan string {
+func Seek(username string, rating int, timeControl [2]int) (chan string, chan *chesslogic.SyncedBoard) {
 	p := Player{}
 	p.Username, p.Rating = username, rating
 	p.Online, p.Playing = true, false
-	p.Comms = make(chan string)
+	p.GameComms = make(chan string)
+	p.BoardComms = make(chan *chesslogic.SyncedBoard)
 	p.TimeControl = timeControl
 	Seeking = append(Seeking, &p)
 
-	fmt.Println(len(Seeking))
-	return p.Comms
+	return p.GameComms, p.BoardComms
 }
