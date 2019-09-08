@@ -18,7 +18,7 @@ Client Threads:
 * How to pair: 
     * Flip coin for color
     * Tell other thread its color
-    * Take channel of list (This may be tricky...)
+    * Take channel off list 
 * How to play:
     * Send moves to one another via channel
 
